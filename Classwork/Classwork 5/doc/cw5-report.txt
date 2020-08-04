@@ -1,0 +1,166 @@
+/**
+ * Classwork 5 - Report
+ * Collect all answers to runtime analysis problems here.
+ * 
+ * GROUP MEMBERS:
+ *   1. Ona Igbinedion
+ *   2. Elise Sawan
+ *   3. Ameya Mellacheruvu
+ */
+
+ 
+// -------------------------------------------------------
+// Problem 1
+// -------------------------------------------------------
+ 
+/**
+ * Assumptions:
+ *  - Let n = the number of words in the input sentence
+ *  - Worst Case Assumption: its a sentence of the same word repeated n times
+ */
+public static int repeats (String sent) {
+    String[] words = sent.split(" "); // c_1
+    String currWord, compWord; // c_2
+    int count = 0; // c_3
+
+    // Compare each pair of words
+    for (int i = 0; i < words.length; i++) { // c_4 * n
+        int earliestIndex = words.length; // c_5 * n
+        boolean repeatFound = false; // c_6 * n
+        currWord = words[i]; // c_7 * n
+        
+        for (int j = 0; j < words.length; j++) { // c_8 * n * n
+            compWord = words[j]; // c_9 * n * n
+            if (currWord.equals(compWord)) { // c_10 * n * n
+                // Remember whether or not we found a match that
+                // wasn't the word itself...
+                repeatFound = i != j; // c_11 * n * n
+                // ...then store the earliest index of a match
+                earliestIndex = Math.min(earliestIndex, j); // c_12 * n * n
+            }
+        }
+        
+        // Only increment the count for the first occurrence of each match
+        count += (repeatFound && i == earliestIndex) ? 1 : 0; // c_13 * n
+    }
+    return count; // c_14
+}
+
+/*
+ * Total Cost Analysis:
+ *   T(n) = c_1 + c_2 + c_3 + c_14 + ( c_4 + c_5 + c_6 + c_7 + c_13)n + ( c_8 + c_9 + c_10 + c_11 + c_12) n^2
+ *        = O (1 ) + O (n) + O (n^2)
+ *        = O (n^2)
+ */
+ 
+ 
+// -------------------------------------------------------
+// Problem 2
+// -------------------------------------------------------
+
+/**
+ * Assumptions:
+ *  - Let n = the size of the input ArrayList.
+ *  - Worst Case Assumption: Array size is 2147483647  (the max size of an array). It's 
+ *							 always going to run all of the code.
+ */
+public static ArrayList<String> reverse_A (ArrayList<String> arr) {
+    ArrayList<String> result = new ArrayList<String>(); // c_1
+    for (int i = 0; i < arr.size(); i++) {  // c_2 * n
+        result.add(0, arr.get(i)); // c_3 * n * n *1 / /note that add has an O(n) and get is O(1)
+    }
+    return result; c_4
+}
+  
+public static ArrayList<String> reverse_B (ArrayList<String> arr) {
+    ArrayList<String> result = new ArrayList<String>(); // c_5
+    for (int i = arr.size() - 1; i >= 0; i--) { // c_6 * n
+        result.add(arr.get(i)); // c_7 * n * n *1
+    }
+    return result; //c_8
+}
+
+/*
+ * Total Cost Analysis:
+ *   T(n<A>) = c_1 + c_4 + c_2 * n + c_3 * n * n = O(1) + O(n) + O(n^2) = O(n^2)
+ *   T(n<B>) = c_5 + c_8 + c_6 * n + c_7 * n * n = O(1) + O(n) + O(n^2) = O(n^2)
+ *   T(n) = O(n^2) in either case, but in actuality B is better because you don't have to shift right
+ *                 whenever you add something in the inner array.
+ */
+ 
+ 
+// -------------------------------------------------------
+// Problem 3
+// -------------------------------------------------------
+
+/**
+ * Assumptions:
+ *  - Let n = a1.length and m = a2.length
+ *  - Worst Case Assumption: The size of n and m are both 2147483647 (the max size of an array) and they are the same array 
+ */
+public static boolean isSubset (int[] a1, int[] a2) {
+    for (int i = 0; i < a1.length; i++) { // c_1 * n
+        boolean contained = false; // c_2 * n
+        for (int j = 0; j < a2.length; j++) { // c_3 * n * m
+            if (a1[i] == a2[j]) {  // c_4 * n * m
+                contained = true; // c_5 * n * m
+                break;
+            }
+        }
+        if (!contained) {return false;} // c_6 * n 
+    }
+    return true; // c_7
+}
+
+/*
+ * Total Cost Analysis:
+ *   T(n, m) = c_7 + (c_1 + c_2 + c_6)n + (c_3 + c_4 + c_5)n * m
+ *		  = O(1) + O(n) + O(n * m)
+ *		  = O(n * m)
+ */
+ 
+ 
+// -------------------------------------------------------
+// Problem 4
+// -------------------------------------------------------
+
+/**
+ * Assumptions:
+ *  - Let t= the typeSize of a Forneymonagerie and s= the size of a Forneymonagerie.
+ *     - Since there are two input Forneymonagerie, we'll refer to t1,s1 and t2,s2 as the typeSize and size of fm1 and fm2, respectively.
+ *  - Worst Case Assumption: If they are the same LinkedForneymonagerie, or contain the same types of ForneymonTypes
+ */
+public static LinkedForneymonagerie comMon (LinkedForneymonagerie fm1, LinkedForneymonagerie fm2) {
+    LinkedForneymonagerie result = new LinkedForneymonagerie(); // c_1;
+    for (ForneymonType curr1 = fm1.head; curr1 != null; curr1 = curr1.next) { // c_2 * t1
+        String type = curr1.type; // c_3 * t1
+        int count1 = curr1.count, // c_8 * t1
+            count2 = fm2.countType(type); // c_4 * t1 * t2
+        if (count2 > 0) { // c_5 * t1
+            result.insertForneymon(type, Math.min(count1, count2)); // c_6 * t1 * t // t is the typeSIze of result which in the 
+             																		// worst case is the typeSize of the smaller 
+             																		// Linked Forneymonagerie when they are the same.
+        }
+    }
+    
+    return result; c_7
+}
+
+/*
+ * Total Cost Analysis:
+ *   T(t1) = c_1 + c_7 + (c_2 + c_3 + c_8+ c_5 +c_6)t1 + c_4 * t1 * t2 + c_6 * t1 *t
+ *         = O(1) + O(t1) + O(t1*t2) +O(t1*t)
+ *		   = O(t1*t2)
+ */
+ 
+ 
+// -------------------------------------------------------
+// FINAL ANSWERS
+// Please collect your final answers to the above, below
+// -------------------------------------------------------
+
+1. T(n) = O (n^2)
+2. T(n) = O(n^2) in either case, but in actuality B is better because you don't have to shift right
+                  whenever you add something in the inner array.
+3. T(n) = O (n * m)
+4. T(t1) = O(t1*t2)
